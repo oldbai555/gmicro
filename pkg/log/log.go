@@ -3,6 +3,7 @@ package log
 import (
 	"fmt"
 	"gmicro/pkg/trace"
+	"io"
 	"os"
 	"path"
 	"path/filepath"
@@ -130,6 +131,10 @@ func InitLogger(opts ...Option) ILogger {
 
 func GetLogger() ILogger {
 	return instance
+}
+
+func GetWriter() io.Writer {
+	return instance.writer
 }
 
 func getPackageName(f string) (filePath string, fileFunc string) {
@@ -265,7 +270,7 @@ func (l *logger) Warnf(format string, v ...interface{}) {
 
 	callInfo := GetCallInfo(GetSkipCall())
 	record := buildRecord(WarnLevel, warnColor, buildTimeInfo(), buildTraceInfo(), buildCallInfo(callInfo), l.prefix, buildContent(format, v...))
-	l.writer.Write(record)
+	l.writer.Write([]byte(record))
 
 	if l.bScreen {
 		fmt.Printf("%s", record)
@@ -279,7 +284,7 @@ func (l *logger) Infof(format string, v ...interface{}) {
 
 	callInfo := GetCallInfo(GetSkipCall())
 	record := buildRecord(InfoLevel, infoColor, buildTimeInfo(), buildTraceInfo(), buildCallInfo(callInfo), l.prefix, buildContent(format, v...))
-	l.writer.Write(record)
+	l.writer.Write([]byte(record))
 
 	if l.bScreen {
 		fmt.Printf("%s", record)
@@ -293,7 +298,7 @@ func (l *logger) Errorf(format string, v ...interface{}) {
 
 	callInfo := GetCallInfo(GetSkipCall())
 	record := buildRecord(ErrorLevel, errorColor, buildTimeInfo(), buildTraceInfo(), buildCallInfo(callInfo), l.prefix, buildContent(format, v...))
-	l.writer.Write(record)
+	l.writer.Write([]byte(record))
 
 	if l.bScreen {
 		fmt.Printf("%s", record)
@@ -304,7 +309,7 @@ func (l *logger) Fatalf(format string, v ...interface{}) {
 	callInfo := GetCallInfo(GetSkipCall())
 	content := buildContent(format, v...)
 	record := buildRecord(FatalLevel, fatalColor, buildTimeInfo(), buildTraceInfo(), buildCallInfo(callInfo), l.prefix, content)
-	l.writer.Write(record)
+	l.writer.Write([]byte(record))
 
 	dir, _ := filepath.Abs(filepath.Dir(os.Args[0]))
 	tf := time.Now()
@@ -324,7 +329,7 @@ func (l *logger) Debugf(format string, v ...interface{}) {
 
 	callInfo := GetCallInfo(GetSkipCall())
 	record := buildRecord(DebugLevel, debugColor, buildTimeInfo(), buildTraceInfo(), buildCallInfo(callInfo), l.prefix, buildContent(format, v...))
-	l.writer.Write(record)
+	l.writer.Write([]byte(record))
 
 	if l.bScreen {
 		fmt.Printf("%s", record)
@@ -338,7 +343,7 @@ func (l *logger) Stackf(format string, v ...interface{}) {
 
 	callInfo := GetCallInfo(GetSkipCall())
 	record := buildRecord(StackLevel, stackColor, buildTimeInfo(), buildTraceInfo(), buildCallInfo(callInfo), l.prefix, buildContent(format, v...))
-	l.writer.Write(record)
+	l.writer.Write([]byte(record))
 
 	if l.bScreen {
 		fmt.Printf("%s", record)
@@ -352,7 +357,7 @@ func (l *logger) Tracef(format string, v ...interface{}) {
 
 	callInfo := GetCallInfo(GetSkipCall())
 	record := buildRecord(TraceLevel, traceColor, buildTimeInfo(), buildTraceInfo(), buildCallInfo(callInfo), l.prefix, buildContent(format, v...))
-	l.writer.Write(record)
+	l.writer.Write([]byte(record))
 	if l.bScreen {
 		fmt.Printf("%s", record)
 	}

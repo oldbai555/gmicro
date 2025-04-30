@@ -1,6 +1,6 @@
 package main
 
-import "gmicro/service/dbproxy/migrate"
+import "gmicro/service/dbproxyserver/migrate"
 
 var Tables = []*migrate.TableConf{
 	{

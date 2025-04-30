@@ -8,7 +8,7 @@
 
 // 指定默认包名
 
-package engine
+package gormx
 
 import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"

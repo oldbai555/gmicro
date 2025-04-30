@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"gmicro/pkg/log"
 	"gmicro/pkg/pie"
-	"gmicro/service/dbproxy/engine"
-	"gmicro/service/dbproxy/mysql"
+	"gmicro/service/dbproxyserver/engine"
+	"gmicro/service/dbproxyserver/mysql"
 	"strings"
 )
 

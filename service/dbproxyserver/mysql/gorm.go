@@ -12,7 +12,7 @@ import (
 	"gmicro/pkg/gerr"
 	"gmicro/pkg/log"
 	"gmicro/pkg/uctx"
-	"gmicro/service/dbproxy/engine"
+	"gmicro/service/gormx"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/schema"
@@ -30,13 +30,13 @@ const (
 type GormEngine struct {
 	db         *gorm.DB
 	lock       sync.Mutex
-	objTypeMgr map[string]*engine.ModelObjectType
+	objTypeMgr map[string]*gormx.ModelObjectType
 
 	trLock sync.Mutex
 	trMap  map[string]*trInfo
 }
 
-func (g *GormEngine) RegObjectType(objTypeList ...*engine.ModelObjectType) {
+func (g *GormEngine) RegObjectType(objTypeList ...*gormx.ModelObjectType) {
 	g.lock.Lock()
 	defer g.lock.Unlock()
 	for _, objectType := range objTypeList {
@@ -57,8 +57,8 @@ func (g *GormEngine) GetDB(trId string) *gorm.DB {
 	return tr.txDb
 }
 
-func (g *GormEngine) GetModelList(ctx uctx.IUCtx, req *engine.GetModelListReq) (*engine.GetModelListRsp, error) {
-	var rsp engine.GetModelListRsp
+func (g *GormEngine) GetModelList(ctx uctx.IUCtx, req *gormx.GetModelListReq) (*gormx.GetModelListRsp, error) {
+	var rsp gormx.GetModelListRsp
 
 	objType, ok := g.objTypeMgr[req.ObjType]
 	if !ok {
@@ -181,7 +181,7 @@ func (g *GormEngine) CheckTableExist(table string) (bool, error) {
 func NewGormEngine(dsn string) *GormEngine {
 	var err error
 	g := &GormEngine{
-		objTypeMgr: make(map[string]*engine.ModelObjectType),
+		objTypeMgr: make(map[string]*gormx.ModelObjectType),
 		trMap:      make(map[string]*trInfo),
 	}
 	ormLog := NewOrmLog(time.Second * 5)

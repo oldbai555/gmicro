@@ -3,8 +3,8 @@ package migrate
 import (
 	"fmt"
 	"gmicro/pkg/log"
-	"gmicro/service/dbproxy/engine"
-	"gmicro/service/dbproxy/mysql"
+	"gmicro/service/dbproxyserver/engine"
+	"gmicro/service/dbproxyserver/mysql"
 )
 
 func BuildTables() {

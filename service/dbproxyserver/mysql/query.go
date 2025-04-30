@@ -12,7 +12,7 @@ import (
 	"gmicro/pkg/gerr"
 	json2 "gmicro/pkg/json"
 	"gmicro/pkg/log"
-	"gmicro/service/dbproxy/engine"
+	"gmicro/service/gormx"
 	"strings"
 )
 
@@ -27,7 +27,7 @@ const (
 	creatorId = "creator_id"
 )
 
-func findFieldsByGetModelListReq(req *engine.GetModelListReq, objectType *engine.ModelObjectType) (string, error) {
+func findFieldsByGetModelListReq(req *gormx.GetModelListReq, objectType *gormx.ModelObjectType) (string, error) {
 	// var fields string
 	if len(req.Fields) > 0 {
 		addId := true
@@ -96,7 +96,7 @@ func quoteName(name string) string {
 	return name
 }
 
-func hasDeletedAtField(objType *engine.ModelObjectType) bool {
+func hasDeletedAtField(objType *gormx.ModelObjectType) bool {
 	for _, v := range objType.FieldList.List {
 		if v.FieldName == deletedAt && v.Type == "uint32" {
 			return true
@@ -105,13 +105,13 @@ func hasDeletedAtField(objType *engine.ModelObjectType) bool {
 	return false
 }
 
-func rawResToListMap(objType *engine.ModelObjectType, res *Rows, returnUnknownFields bool) []map[string]interface{} {
-	fieldTypeMap := make(map[string]*engine.ObjectField, len(objType.FieldList.List))
+func rawResToListMap(objType *gormx.ModelObjectType, res *Rows, returnUnknownFields bool) []map[string]interface{} {
+	fieldTypeMap := make(map[string]*gormx.ObjectField, len(objType.FieldList.List))
 	for _, v := range objType.FieldList.List {
 		fieldTypeMap[v.FieldName] = v
 	}
 
-	colFieldType := make([]*engine.ObjectField, len(res.cols))
+	colFieldType := make([]*gormx.ObjectField, len(res.cols))
 	for i, v := range res.cols {
 		colFieldType[i] = fieldTypeMap[v]
 	}
@@ -120,7 +120,7 @@ func rawResToListMap(objType *engine.ModelObjectType, res *Rows, returnUnknownFi
 	for i, row := range res.rows {
 		rowMap := make(map[string]any, len(res.cols))
 		for i, col := range res.cols {
-			var fieldType *engine.ObjectField
+			var fieldType *gormx.ObjectField
 			if colFieldType != nil && i < len(colFieldType) {
 				fieldType = colFieldType[i]
 			}
@@ -141,7 +141,7 @@ func rawResToListMap(objType *engine.ModelObjectType, res *Rows, returnUnknownFi
 
 	return list
 }
-func convertByFieldType(s string, f *engine.ObjectField) interface{} {
+func convertByFieldType(s string, f *gormx.ObjectField) interface{} {
 	// 支持数组
 	if f.IsArray {
 		var list []interface{}

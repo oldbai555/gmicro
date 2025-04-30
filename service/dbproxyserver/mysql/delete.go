@@ -11,12 +11,12 @@ import (
 	utils "gmicro/common"
 	"gmicro/pkg/log"
 	"gmicro/pkg/uctx"
-	"gmicro/service/dbproxy/engine"
+	"gmicro/service/gormx"
 	"gorm.io/gorm"
 )
 
-func (g *GormEngine) DelModel(ctx uctx.IUCtx, req *engine.DelModelReq) (*engine.DelModelRsp, error) {
-	var rsp engine.DelModelRsp
+func (g *GormEngine) DelModel(ctx uctx.IUCtx, req *gormx.DelModelReq) (*gormx.DelModelRsp, error) {
+	var rsp gormx.DelModelRsp
 
 	objType, ok := g.objTypeMgr[req.ObjType]
 	if !ok {

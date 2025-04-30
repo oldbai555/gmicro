@@ -3,6 +3,7 @@ package log
 import (
 	"errors"
 	"fmt"
+	"gmicro/pkg/gerr"
 	"os"
 	"path/filepath"
 	"strings"
@@ -195,13 +196,15 @@ func (w *FileLoggerWriter) isFlushingNow() bool {
 	return w.isFlushing.Load()
 }
 
-func (w *FileLoggerWriter) Write(logContent string) {
+func (w *FileLoggerWriter) Write(logContent []byte) (n int, err error) {
 	select {
-	case w.bufCh <- []byte(logContent):
+	case w.bufCh <- logContent:
+		n = len(logContent)
 	default:
 		// never blocking main thread
-		fmt.Println("log content cached buf full, lost:" + logContent)
+		err = gerr.NewCustomErr("log content cached buf full, lost:%s", logContent)
 	}
+	return
 }
 
 func (w *FileLoggerWriter) Loop() error {

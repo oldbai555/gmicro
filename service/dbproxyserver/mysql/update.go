@@ -13,14 +13,14 @@ import (
 	"gmicro/pkg/json"
 	"gmicro/pkg/log"
 	"gmicro/pkg/uctx"
-	"gmicro/service/dbproxy/engine"
+	"gmicro/service/gormx"
 
 	"strings"
 	"time"
 )
 
-func (g *GormEngine) UpdateModel(ctx uctx.IUCtx, req *engine.UpdateModelReq) (*engine.UpdateModelRsp, error) {
-	var rsp engine.UpdateModelRsp
+func (g *GormEngine) UpdateModel(ctx uctx.IUCtx, req *gormx.UpdateModelReq) (*gormx.UpdateModelRsp, error) {
+	var rsp gormx.UpdateModelRsp
 
 	objType, ok := g.objTypeMgr[req.ObjType]
 	if !ok {
@@ -119,8 +119,8 @@ func (g *GormEngine) UpdateModel(ctx uctx.IUCtx, req *engine.UpdateModelReq) (*e
 	return &rsp, nil
 }
 
-func (g *GormEngine) SetModel(ctx uctx.IUCtx, req *engine.SetModelReq) (*engine.SetModelRsp, error) {
-	var rsp engine.SetModelRsp
+func (g *GormEngine) SetModel(ctx uctx.IUCtx, req *gormx.SetModelReq) (*gormx.SetModelRsp, error) {
+	var rsp gormx.SetModelRsp
 
 	objType, ok := g.objTypeMgr[req.ObjType]
 	if !ok {
