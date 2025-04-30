@@ -66,9 +66,9 @@ func main() {
 
 func registerCmd(r *gin.Engine, cmd *autocmd.Cmd) {
 	cmd.WithHandleError(func(ctx *gin.Context, err error) {
-
+		ctx.JSON(200, err)
 	}).WithHandleResult(func(ctx *gin.Context, result proto.Message) {
-
+		ctx.JSON(200, result)
 	}).WithGenIUCtx(func(ctx *gin.Context) uctx.IUCtx {
 		return uctx.NewBaseUCtx()
 	})
