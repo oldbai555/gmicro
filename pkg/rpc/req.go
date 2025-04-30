@@ -56,7 +56,7 @@ func DoRequest(ctx uctx.IUCtx, serverName, path, method string, req, out proto.M
 	var headers = make(map[string]string)
 
 	// todo 服务发现
-	var target = fmt.Sprintf("%s://%s:%s", "http", "127.0.0.1", "20001")
+	var target = fmt.Sprintf("%s://%s:%d", "http", "127.0.0.1", 20002)
 	result, err := url.JoinPath(target, path)
 	if err != nil {
 		return gerr.Wrap(err)

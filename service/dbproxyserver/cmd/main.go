@@ -7,6 +7,7 @@ import (
 	"gmicro/common"
 	"gmicro/pkg/autocmd"
 	"gmicro/pkg/log"
+	"gmicro/pkg/uctx"
 	"gmicro/service/dbproxyserver/engine"
 	"gmicro/service/dbproxyserver/mysql"
 	"google.golang.org/protobuf/proto"
@@ -24,8 +25,6 @@ func main() {
 	engine.SetOrmEngine(gormEngine)
 	gin.SetMode(gin.ReleaseMode)
 
-	gin.DefaultWriter = log.GetWriter()
-	gin.DefaultErrorWriter = log.GetWriter()
 	gin.DebugPrintRouteFunc = func(httpMethod, absolutePath, handlerName string, nuHandlers int) {
 		log.Infof("%-6s %-25s --> %s (%d handlers)", httpMethod, absolutePath, handlerName, nuHandlers)
 	}
@@ -51,15 +50,15 @@ func main() {
 	ginpprof.Wrap(router)
 
 	ginSrv := &http.Server{
-		Addr:    fmt.Sprintf(":%d", 20001),
+		Addr:    fmt.Sprintf("0.0.0.0:%d", 20002),
 		Handler: router,
 	}
 
 	// 启动服务
-	log.Infof("====== start gin %s server, port is %d ======", "dbproxy", 20001)
+	log.Infof("====== start gin %s server, port is %d ======", "dbproxy", 20002)
 	err := ginSrv.ListenAndServe()
 	if err != nil {
-		log.Errorf("err:%v", err)
+		log.Errorf("Failed to start server: %v", err)
 		return
 	}
 	return
@@ -70,6 +69,8 @@ func registerCmd(r *gin.Engine, cmd *autocmd.Cmd) {
 
 	}).WithHandleResult(func(ctx *gin.Context, result proto.Message) {
 
+	}).WithGenIUCtx(func(ctx *gin.Context) uctx.IUCtx {
+		return uctx.NewBaseUCtx()
 	})
 	r.POST(cmd.Path, cmd.GinPost)
 }

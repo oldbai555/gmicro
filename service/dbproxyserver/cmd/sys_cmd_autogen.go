@@ -8,10 +8,10 @@ import (
 )
 
 var cmdList = []*autocmd.Cmd{
-	{Server: "dbproxyserver", Path: "/dbproxy/InsertModel", GRpcFunc: impl.InsertModel, OptionMap: map[string]string{"ApiMethod": "POST"}},
-	{Server: "dbproxyserver", Path: "/dbproxy/DelModel", GRpcFunc: impl.DelModel, OptionMap: map[string]string{"ApiMethod": "POST"}},
-	{Server: "dbproxyserver", Path: "/dbproxy/UpdateModel", GRpcFunc: impl.UpdateModel, OptionMap: map[string]string{"ApiMethod": "POST"}},
-	{Server: "dbproxyserver", Path: "/dbproxy/BatchInsertModel", GRpcFunc: impl.BatchInsertModel, OptionMap: map[string]string{"ApiMethod": "POST"}},
-	{Server: "dbproxyserver", Path: "/dbproxy/SetModel", GRpcFunc: impl.SetModel, OptionMap: map[string]string{"ApiMethod": "POST"}},
-	{Server: "dbproxyserver", Path: "/dbproxy/GetModelList", GRpcFunc: impl.GetModelList, OptionMap: map[string]string{"ApiMethod": "POST"}},
+	{Server: "dbproxyserver", Path: "/dbproxy/InsertModel", GRpcFunc: impl.InsertModel, OptionMap: map[string]string{"ApiMethod": "POST", "AuthType": "system"}},
+	{Server: "dbproxyserver", Path: "/dbproxy/DelModel", GRpcFunc: impl.DelModel, OptionMap: map[string]string{"ApiMethod": "POST", "AuthType": "system"}},
+	{Server: "dbproxyserver", Path: "/dbproxy/UpdateModel", GRpcFunc: impl.UpdateModel, OptionMap: map[string]string{"ApiMethod": "POST", "AuthType": "system"}},
+	{Server: "dbproxyserver", Path: "/dbproxy/BatchInsertModel", GRpcFunc: impl.BatchInsertModel, OptionMap: map[string]string{"ApiMethod": "POST", "AuthType": "system"}},
+	{Server: "dbproxyserver", Path: "/dbproxy/SetModel", GRpcFunc: impl.SetModel, OptionMap: map[string]string{"ApiMethod": "POST", "AuthType": "system"}},
+	{Server: "dbproxyserver", Path: "/dbproxy/GetModelList", GRpcFunc: impl.GetModelList, OptionMap: map[string]string{"ApiMethod": "POST", "AuthType": "system"}},
 }
