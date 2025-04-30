@@ -15,7 +15,7 @@ import (
 
 func InsertModel(ctx uctx.IUCtx, req *InsertModelReq) (*InsertModelRsp, error) {
 	var resp InsertModelRsp
-	err := rpc.DoRequest(ctx, "dbproxy", "/dbproxyserver/InsertModel", http.MethodPost, req, &resp)
+	err := rpc.DoRequest(ctx, "dbproxy", "/dbproxy/InsertModel", http.MethodPost, req, &resp)
 	if err != nil {
 		return nil, gerr.Wrap(err)
 	}
@@ -24,7 +24,7 @@ func InsertModel(ctx uctx.IUCtx, req *InsertModelReq) (*InsertModelRsp, error) {
 
 func DelModel(ctx uctx.IUCtx, req *DelModelReq) (*DelModelRsp, error) {
 	var resp DelModelRsp
-	err := rpc.DoRequest(ctx, "dbproxy", "/dbproxyserver/DelModel", http.MethodPost, req, &resp)
+	err := rpc.DoRequest(ctx, "dbproxy", "/dbproxy/DelModel", http.MethodPost, req, &resp)
 	if err != nil {
 		return nil, gerr.Wrap(err)
 	}
@@ -33,7 +33,7 @@ func DelModel(ctx uctx.IUCtx, req *DelModelReq) (*DelModelRsp, error) {
 
 func UpdateModel(ctx uctx.IUCtx, req *UpdateModelReq) (*UpdateModelRsp, error) {
 	var resp UpdateModelRsp
-	err := rpc.DoRequest(ctx, "dbproxy", "/dbproxyserver/UpdateModel", http.MethodPost, req, &resp)
+	err := rpc.DoRequest(ctx, "dbproxy", "/dbproxy/UpdateModel", http.MethodPost, req, &resp)
 	if err != nil {
 		return nil, gerr.Wrap(err)
 	}
@@ -42,7 +42,7 @@ func UpdateModel(ctx uctx.IUCtx, req *UpdateModelReq) (*UpdateModelRsp, error) {
 
 func BatchInsertModel(ctx uctx.IUCtx, req *BatchInsertModelReq) (*BatchInsertModelRsp, error) {
 	var resp BatchInsertModelRsp
-	err := rpc.DoRequest(ctx, "dbproxy", "/dbproxyserver/BatchInsertModel", http.MethodPost, req, &resp)
+	err := rpc.DoRequest(ctx, "dbproxy", "/dbproxy/BatchInsertModel", http.MethodPost, req, &resp)
 	if err != nil {
 		return nil, gerr.Wrap(err)
 	}
@@ -51,7 +51,7 @@ func BatchInsertModel(ctx uctx.IUCtx, req *BatchInsertModelReq) (*BatchInsertMod
 
 func SetModel(ctx uctx.IUCtx, req *SetModelReq) (*SetModelRsp, error) {
 	var resp SetModelRsp
-	err := rpc.DoRequest(ctx, "dbproxy", "/dbproxyserver/SetModel", http.MethodPost, req, &resp)
+	err := rpc.DoRequest(ctx, "dbproxy", "/dbproxy/SetModel", http.MethodPost, req, &resp)
 	if err != nil {
 		return nil, gerr.Wrap(err)
 	}

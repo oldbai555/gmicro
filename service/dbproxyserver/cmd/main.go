@@ -43,6 +43,9 @@ func main() {
 	for _, cmd := range cmdList {
 		registerCmd(router, cmd)
 	}
+	router.GET("hellp", func(context *gin.Context) {
+		context.JSON(200, "你好")
+	})
 
 	// 注册自定义路由
 	ginpprof.Wrap(router)
