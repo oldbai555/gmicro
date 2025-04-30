@@ -1,8 +1,10 @@
 package migrate
 
 import (
+	"context"
 	"fmt"
 	"gmicro/pkg/log"
+	"gmicro/pkg/pie"
 	"gmicro/service/dbproxy/engine"
 	"gmicro/service/dbproxy/mysql"
 	"strings"
@@ -104,18 +106,21 @@ func (st *TableSt) HasTable() bool {
 	if st.Exists {
 		return true
 	}
+
 	gormEngine := engine.GetOrmEngine().(*mysql.GormEngine)
 	if gormEngine == nil {
 		return false
 	}
+
+	// 修改: 使用明确的参数绑定，避免 SQL 语法错误
 	var tables []string
-	err := gormEngine.GetDB("").Raw("SHOW TABLES LIKE ?", st.Name).Scan(&tables).Error
+	err := gormEngine.GetDB("").WithContext(context.Background()).Raw("SHOW TABLES").Scan(&tables).Error
 	if err != nil {
 		log.Errorf("err:%v", err)
 		return false
 	}
 
-	st.Exists = len(tables) > 0
+	st.Exists = pie.Strings(tables).Contains(st.Name)
 	return st.Exists
 }
 
@@ -132,7 +137,7 @@ func (st *TableSt) HasData() bool {
 		return false
 	}
 	var count int64
-	err := gormEngine.GetDB("").Raw("SELECT COUNT(*) FROM ??", st.Name).Scan(&count).Error
+	err := gormEngine.GetDB("").Table(st.Name).Count(&count).Error
 	if err != nil {
 		log.Errorf("err:%v", err)
 		return false
@@ -210,7 +215,7 @@ func (st *TableSt) Check() {
 }
 
 func (st *TableSt) Create() {
-	Exec(st.CreateTableSQL(), EchoSQL)
+	Exec(st.CreateTableSQL())
 }
 
 func (st *TableSt) Change() {
@@ -223,23 +228,23 @@ func (st *TableSt) Change() {
 		//该列已经存在，检查是否需要修改
 		if mysqlInfo, ok := columns[name]; ok {
 			if !column.IsEqual(mysqlInfo) {
-				Exec(column.ChangeColumnSQL(st.Name), EchoSQL)
+				Exec(column.ChangeColumnSQL(st.Name))
 			}
 		} else { //不存在则添加
-			Exec(column.AddColumnSQL(st.Name), EchoSQL)
+			Exec(column.AddColumnSQL(st.Name))
 			bChange = true
 		}
 	}
 	//需要删除的column和key
 	for _, mysqlInfo := range columns {
 		if _, ok := st.Columns[mysqlInfo.Field]; !ok {
-			Exec(DropColumnSQL(st.Name, mysqlInfo.Field), EchoSQL)
+			Exec(DropColumnSQL(st.Name, mysqlInfo.Field))
 			bChange = true
 			//column不需要删除时再检测key (因为column删除了key也会删除)
 		} else if mysqlInfo.Key != NO {
 			//这个key以前有现在没了
 			if _, ok := st.keys[mysqlInfo.Field]; !ok {
-				Exec(DropKeySQL(st.Name, mysqlInfo.Field, mysqlInfo.Key), EchoSQL)
+				Exec(DropKeySQL(st.Name, mysqlInfo.Field, mysqlInfo.Key))
 			}
 		}
 	}
@@ -256,7 +261,7 @@ func (st *TableSt) Change() {
 			log.Fatalf("table %s add key error!", st.Name)
 		}
 		if mysqlInfo.Key == NO {
-			Exec(key.AddKeySQL(st), EchoSQL)
+			Exec(key.AddKeySQL(st))
 		}
 	}
 
@@ -269,7 +274,7 @@ func (st *TableSt) Change() {
 			} else {
 				column.SetPlace(st.Sequence[i-1].GetName())
 			}
-			Exec(column.ChangeColumnSQL(st.Name), true)
+			Exec(column.ChangeColumnSQL(st.Name))
 		}
 	}
 }
@@ -285,7 +290,7 @@ func (st *TableSt) GetTableColumnInfo(reset bool) *TableInfoSt {
 	st.sqlInfo = new(TableInfoSt)
 	st.sqlInfo.Columns = make(map[string]*MysqlColumnSt)
 
-	err := gormEngine.GetDB("").Raw(fmt.Sprintf("show columns from %s;", st.Name)).Scan(&st.sqlInfo.Sequence).Error
+	err := gormEngine.GetDB("").Raw(fmt.Sprintf("show columns from %s", st.Name)).Scan(&st.sqlInfo.Sequence).Error
 	if err != nil {
 		log.Errorf("查询失败！error:%s", err)
 		return nil

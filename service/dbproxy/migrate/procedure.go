@@ -11,8 +11,8 @@ type ProcedureSt struct {
 }
 
 func (st *ProcedureSt) Build() {
-	Exec(st.CreateDropSQL(), false)
-	Exec(st.CreateProcedureSQL(), false)
+	Exec(st.CreateDropSQL())
+	Exec(st.CreateProcedureSQL())
 }
 
 func (st *ProcedureSt) CreateDropSQL() string {

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"gmicro/pkg/log"
 	"gmicro/service/dbproxy/engine"
+	"gmicro/service/dbproxy/mysql"
 )
 
 func BuildTables() {
@@ -12,16 +13,17 @@ func BuildTables() {
 	}
 }
 
-func Exec(sql string, echo bool) {
+func Exec(sql string) {
 	if len(sql) <= 0 {
 		return
 	}
-	if echo {
-		log.Infof("%s", sql)
+	gormEngine := engine.GetOrmEngine().(*mysql.GormEngine)
+	if gormEngine == nil {
+		return
 	}
-	err := engine.GetOrmEngine().Exec(sql)
+	err := gormEngine.GetDB("").Exec(sql).Error
 	if nil != err {
-		log.Fatalf("%s", err)
+		log.Errorf("err:%v", err)
 	}
 }
 
