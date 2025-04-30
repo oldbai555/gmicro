@@ -166,9 +166,9 @@ func (p *BaseScope[M]) GetTableName() string {
 	return p.m.table
 }
 
-func (p *BaseScope[M]) newGetModelListReq() *GetModelListReq {
+func (p *BaseScope[M]) newGetModelListReq() *dbproxy.GetModelListReq {
 	m := p.m
-	return &GetModelListReq{
+	return &dbproxy.GetModelListReq{
 		ObjType:             m.modelType,
 		Table:               p.GetTableName(),
 		Cond:                p.cond.ToString(),
@@ -256,7 +256,7 @@ func (p *BaseScope[M]) Create(ctx uctx.IUCtx, obj interface{}) error {
 		log.Errorf("err:%v", err)
 		return err
 	}
-	rsp, err := dbproxy.InsertModel(ctx, &InsertModelReq{
+	rsp, err := dbproxy.InsertModel(ctx, &dbproxy.InsertModelReq{
 		ObjType:          p.m.modelType,
 		Db:               p.db,
 		Table:            p.GetTableName(),
@@ -372,7 +372,7 @@ func (p *BaseScope[M]) Delete(ctx uctx.IUCtx) (DeleteResult, error) {
 	if cond == "" {
 		return res, errors.New("cond empty")
 	}
-	req := &DelModelReq{
+	req := &dbproxy.DelModelReq{
 		ObjType:          p.m.modelType,
 		Table:            p.GetTableName(),
 		Cond:             cond,
@@ -444,7 +444,7 @@ func (p *BaseScope[M]) Update(ctx uctx.IUCtx, updateMap map[string]interface{}) 
 		return res, err
 	}
 	j := string(buf)
-	rsp, err := dbproxy.UpdateModel(ctx, &UpdateModelReq{
+	rsp, err := dbproxy.UpdateModel(ctx, &dbproxy.UpdateModelReq{
 		ObjType:          p.m.modelType,
 		Table:            p.GetTableName(),
 		JsonData:         j,
@@ -501,7 +501,7 @@ func (p *BaseScope[M]) BatchCreate(ctx uctx.IUCtx, chunkSize int, objList interf
 			}
 			jsonList = append(jsonList, j)
 		}
-		rsp, err := dbproxy.BatchInsertModel(ctx, &BatchInsertModelReq{
+		rsp, err := dbproxy.BatchInsertModel(ctx, &dbproxy.BatchInsertModelReq{
 			ObjType:          p.m.modelType,
 			Table:            p.GetTableName(),
 			JsonDataList:     jsonList,
@@ -559,7 +559,7 @@ func (p *BaseScope[M]) Save(ctx uctx.IUCtx, obj interface{}) (UpdateResult, erro
 	}
 	cond := p.cond.ToString()
 
-	rsp, err := dbproxy.SetModel(ctx, &SetModelReq{
+	rsp, err := dbproxy.SetModel(ctx, &dbproxy.SetModelReq{
 		ObjType:          p.m.modelType,
 		Table:            p.GetTableName(),
 		JsonData:         j,

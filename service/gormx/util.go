@@ -37,7 +37,7 @@ func toJonSkipZeroValueField(obj interface{}) (string, error) {
 	if msg, ok := obj.(proto.Message); ok {
 		j, err := jsonpb.MarshalToString(msg)
 		if err != nil {
-			log.Errorf("proto MarshalToString err:v", err)
+			log.Errorf("proto MarshalToString err:%v", err)
 			return "", err
 		}
 		return j, nil

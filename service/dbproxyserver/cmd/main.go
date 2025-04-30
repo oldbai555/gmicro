@@ -23,6 +23,7 @@ func main() {
 	gormEngine := mysql.NewGormEngine(dns)
 	engine.SetOrmEngine(gormEngine)
 	gin.SetMode(gin.ReleaseMode)
+
 	gin.DefaultWriter = log.GetWriter()
 	gin.DefaultErrorWriter = log.GetWriter()
 	gin.DebugPrintRouteFunc = func(httpMethod, absolutePath, handlerName string, nuHandlers int) {
@@ -40,7 +41,7 @@ func main() {
 
 	// proto 生成的路由
 	for _, cmd := range cmdList {
-		p.registerCmd(router, cmd)
+		registerCmd(router, cmd)
 	}
 
 	// 注册自定义路由

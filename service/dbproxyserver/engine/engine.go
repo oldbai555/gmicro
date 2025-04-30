@@ -8,17 +8,17 @@ package engine
 
 import (
 	"gmicro/pkg/uctx"
-	"gmicro/service/gormx"
+	"gmicro/service/dbproxy"
 )
 
 type IOrmEngine interface {
-	GetModelList(ctx uctx.IUCtx, req *gormx.GetModelListReq) (*gormx.GetModelListRsp, error)
-	InsertModel(ctx uctx.IUCtx, req *gormx.InsertModelReq) (*gormx.InsertModelRsp, error)
-	DelModel(ctx uctx.IUCtx, req *gormx.DelModelReq) (*gormx.DelModelRsp, error)
-	UpdateModel(ctx uctx.IUCtx, req *gormx.UpdateModelReq) (*gormx.UpdateModelRsp, error)
-	BatchInsertModel(ctx uctx.IUCtx, req *gormx.BatchInsertModelReq) (*gormx.BatchInsertModelRsp, error)
-	SetModel(ctx uctx.IUCtx, req *gormx.SetModelReq) (*gormx.SetModelRsp, error)
-	RegObjectType(objType ...*gormx.ModelObjectType)
+	GetModelList(ctx uctx.IUCtx, req *dbproxy.GetModelListReq) (*dbproxy.GetModelListRsp, error)
+	InsertModel(ctx uctx.IUCtx, req *dbproxy.InsertModelReq) (*dbproxy.InsertModelRsp, error)
+	DelModel(ctx uctx.IUCtx, req *dbproxy.DelModelReq) (*dbproxy.DelModelRsp, error)
+	UpdateModel(ctx uctx.IUCtx, req *dbproxy.UpdateModelReq) (*dbproxy.UpdateModelRsp, error)
+	BatchInsertModel(ctx uctx.IUCtx, req *dbproxy.BatchInsertModelReq) (*dbproxy.BatchInsertModelRsp, error)
+	SetModel(ctx uctx.IUCtx, req *dbproxy.SetModelReq) (*dbproxy.SetModelRsp, error)
+	RegObjectType(objType ...*dbproxy.ModelObjectType)
 	Begin() (string, error)
 	Rollback(trId string) error
 	Commit(trId string) error

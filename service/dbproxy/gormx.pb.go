@@ -8,7 +8,7 @@
 
 // 指定默认包名
 
-package gormx
+package dbproxy
 
 import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"

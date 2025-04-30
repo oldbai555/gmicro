@@ -12,7 +12,7 @@ import (
 	"gmicro/pkg/gerr"
 	json2 "gmicro/pkg/json"
 	"gmicro/pkg/log"
-	"gmicro/service/gormx"
+	"gmicro/service/dbproxy"
 	"strings"
 )
 
@@ -27,7 +27,7 @@ const (
 	creatorId = "creator_id"
 )
 
-func findFieldsByGetModelListReq(req *gormx.GetModelListReq, objectType *gormx.ModelObjectType) (string, error) {
+func findFieldsByGetModelListReq(req *dbproxy.GetModelListReq, objectType *dbproxy.ModelObjectType) (string, error) {
 	// var fields string
 	if len(req.Fields) > 0 {
 		addId := true
@@ -96,7 +96,7 @@ func quoteName(name string) string {
 	return name
 }
 
-func hasDeletedAtField(objType *gormx.ModelObjectType) bool {
+func hasDeletedAtField(objType *dbproxy.ModelObjectType) bool {
 	for _, v := range objType.FieldList.List {
 		if v.FieldName == deletedAt && v.Type == "uint32" {
 			return true
@@ -105,13 +105,13 @@ func hasDeletedAtField(objType *gormx.ModelObjectType) bool {
 	return false
 }
 
-func rawResToListMap(objType *gormx.ModelObjectType, res *Rows, returnUnknownFields bool) []map[string]interface{} {
-	fieldTypeMap := make(map[string]*gormx.ObjectField, len(objType.FieldList.List))
+func rawResToListMap(objType *dbproxy.ModelObjectType, res *Rows, returnUnknownFields bool) []map[string]interface{} {
+	fieldTypeMap := make(map[string]*dbproxy.ObjectField, len(objType.FieldList.List))
 	for _, v := range objType.FieldList.List {
 		fieldTypeMap[v.FieldName] = v
 	}
 
-	colFieldType := make([]*gormx.ObjectField, len(res.cols))
+	colFieldType := make([]*dbproxy.ObjectField, len(res.cols))
 	for i, v := range res.cols {
 		colFieldType[i] = fieldTypeMap[v]
 	}
@@ -120,7 +120,7 @@ func rawResToListMap(objType *gormx.ModelObjectType, res *Rows, returnUnknownFie
 	for i, row := range res.rows {
 		rowMap := make(map[string]any, len(res.cols))
 		for i, col := range res.cols {
-			var fieldType *gormx.ObjectField
+			var fieldType *dbproxy.ObjectField
 			if colFieldType != nil && i < len(colFieldType) {
 				fieldType = colFieldType[i]
 			}
@@ -141,7 +141,7 @@ func rawResToListMap(objType *gormx.ModelObjectType, res *Rows, returnUnknownFie
 
 	return list
 }
-func convertByFieldType(s string, f *gormx.ObjectField) interface{} {
+func convertByFieldType(s string, f *dbproxy.ObjectField) interface{} {
 	// 支持数组
 	if f.IsArray {
 		var list []interface{}

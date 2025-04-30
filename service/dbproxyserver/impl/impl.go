@@ -10,11 +10,11 @@ import (
 	"context"
 	"gmicro/pkg/log"
 	"gmicro/pkg/uctx"
+	"gmicro/service/dbproxy"
 	"gmicro/service/dbproxyserver/engine"
-	"gmicro/service/gormx"
 )
 
-func InsertModel(ctx context.Context, req *gormx.InsertModelReq) (*gormx.InsertModelRsp, error) {
+func InsertModel(ctx context.Context, req *dbproxy.InsertModelReq) (*dbproxy.InsertModelRsp, error) {
 	rsp, err := engine.GetOrmEngine().InsertModel(uctx.NewBaseUCtx(), req)
 	if err != nil {
 		log.Errorf("err:%v", err)
@@ -23,7 +23,7 @@ func InsertModel(ctx context.Context, req *gormx.InsertModelReq) (*gormx.InsertM
 	return rsp, err
 }
 
-func DelModel(ctx context.Context, req *gormx.DelModelReq) (*gormx.DelModelRsp, error) {
+func DelModel(ctx context.Context, req *dbproxy.DelModelReq) (*dbproxy.DelModelRsp, error) {
 	rsp, err := engine.GetOrmEngine().DelModel(uctx.NewBaseUCtx(), req)
 	if err != nil {
 		log.Errorf("err:%v", err)
@@ -32,7 +32,7 @@ func DelModel(ctx context.Context, req *gormx.DelModelReq) (*gormx.DelModelRsp, 
 	return rsp, err
 }
 
-func UpdateModel(ctx context.Context, req *gormx.UpdateModelReq) (*gormx.UpdateModelRsp, error) {
+func UpdateModel(ctx context.Context, req *dbproxy.UpdateModelReq) (*dbproxy.UpdateModelRsp, error) {
 	rsp, err := engine.GetOrmEngine().UpdateModel(uctx.NewBaseUCtx(), req)
 	if err != nil {
 		log.Errorf("err:%v", err)
@@ -41,7 +41,7 @@ func UpdateModel(ctx context.Context, req *gormx.UpdateModelReq) (*gormx.UpdateM
 	return rsp, err
 }
 
-func BatchInsertModel(ctx context.Context, req *gormx.BatchInsertModelReq) (*gormx.BatchInsertModelRsp, error) {
+func BatchInsertModel(ctx context.Context, req *dbproxy.BatchInsertModelReq) (*dbproxy.BatchInsertModelRsp, error) {
 	rsp, err := engine.GetOrmEngine().BatchInsertModel(uctx.NewBaseUCtx(), req)
 	if err != nil {
 		log.Errorf("err:%v", err)
@@ -50,7 +50,7 @@ func BatchInsertModel(ctx context.Context, req *gormx.BatchInsertModelReq) (*gor
 	return rsp, err
 }
 
-func SetModel(ctx context.Context, req *gormx.SetModelReq) (*gormx.SetModelRsp, error) {
+func SetModel(ctx context.Context, req *dbproxy.SetModelReq) (*dbproxy.SetModelRsp, error) {
 	rsp, err := engine.GetOrmEngine().SetModel(uctx.NewBaseUCtx(), req)
 	if err != nil {
 		log.Errorf("err:%v", err)
@@ -59,7 +59,7 @@ func SetModel(ctx context.Context, req *gormx.SetModelReq) (*gormx.SetModelRsp, 
 	return rsp, err
 }
 
-func GetModelList(ctx context.Context, req *gormx.GetModelListReq) (*gormx.GetModelListRsp, error) {
+func GetModelList(ctx context.Context, req *dbproxy.GetModelListReq) (*dbproxy.GetModelListRsp, error) {
 	rsp, err := engine.GetOrmEngine().GetModelList(uctx.NewBaseUCtx(), req)
 	if err != nil {
 		log.Errorf("err:%v", err)

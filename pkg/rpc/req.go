@@ -45,7 +45,7 @@ func NewRequest() *resty.Request {
 	return defaultRestyClient.R()
 }
 
-func DoRequest(_ uctx.IUCtx, _, path, method string, req, out proto.Message) error {
+func DoRequest(ctx uctx.IUCtx, serverName, path, method string, req, out proto.Message) error {
 	var body []byte
 	val, err := jsonpb.MarshalToString(req)
 	body = []byte(val)
@@ -56,7 +56,7 @@ func DoRequest(_ uctx.IUCtx, _, path, method string, req, out proto.Message) err
 	var headers = make(map[string]string)
 
 	// todo 服务发现
-	var target = fmt.Sprintf("%s://%s:%s/gateway", "http", "127.0.0.1", "20000")
+	var target = fmt.Sprintf("%s://%s:%s", "http", "127.0.0.1", "20001")
 	result, err := url.JoinPath(target, path)
 	if err != nil {
 		return gerr.Wrap(err)

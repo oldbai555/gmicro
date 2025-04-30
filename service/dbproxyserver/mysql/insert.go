@@ -15,15 +15,15 @@ import (
 	json2 "gmicro/pkg/json"
 	"gmicro/pkg/log"
 	"gmicro/pkg/uctx"
-	"gmicro/service/gormx"
+	"gmicro/service/dbproxy"
 	"gorm.io/gorm"
 	"reflect"
 	"strconv"
 	"time"
 )
 
-func (g *GormEngine) InsertModel(ctx uctx.IUCtx, req *gormx.InsertModelReq) (*gormx.InsertModelRsp, error) {
-	var rsp gormx.InsertModelRsp
+func (g *GormEngine) InsertModel(ctx uctx.IUCtx, req *dbproxy.InsertModelReq) (*dbproxy.InsertModelRsp, error) {
+	var rsp dbproxy.InsertModelRsp
 
 	objType, ok := g.objTypeMgr[req.ObjType]
 	if !ok {
@@ -83,7 +83,7 @@ func (g *GormEngine) InsertModel(ctx uctx.IUCtx, req *gormx.InsertModelReq) (*go
 	)
 
 	// 没想好怎么拿
-	var pkField *gormx.ObjectField
+	var pkField *dbproxy.ObjectField
 	for _, v := range objType.FieldList.List {
 		if v.FieldName == idKey {
 			pkField = v
@@ -163,8 +163,8 @@ func (g *GormEngine) InsertModel(ctx uctx.IUCtx, req *gormx.InsertModelReq) (*go
 	return &rsp, nil
 }
 
-func (g *GormEngine) BatchInsertModel(ctx uctx.IUCtx, req *gormx.BatchInsertModelReq) (*gormx.BatchInsertModelRsp, error) {
-	var rsp gormx.BatchInsertModelRsp
+func (g *GormEngine) BatchInsertModel(ctx uctx.IUCtx, req *dbproxy.BatchInsertModelReq) (*dbproxy.BatchInsertModelRsp, error) {
+	var rsp dbproxy.BatchInsertModelRsp
 
 	objType, ok := g.objTypeMgr[req.ObjType]
 	if !ok {
@@ -228,12 +228,12 @@ func setIfZero(j map[string]interface{}, k string, v uint32) {
 	}
 }
 
-func adjustJson(objType *gormx.ModelObjectType, j map[string]interface{}, modMap map[string]interface{}) (map[string]interface{}, error) {
+func adjustJson(objType *dbproxy.ModelObjectType, j map[string]interface{}, modMap map[string]interface{}) (map[string]interface{}, error) {
 	if modMap == nil {
 		modMap = map[string]interface{}{}
 	}
 
-	fieldMap := map[string]*gormx.ObjectField{}
+	fieldMap := map[string]*dbproxy.ObjectField{}
 	for _, v := range objType.FieldList.List {
 		fieldMap[v.FieldName] = v
 	}
@@ -334,7 +334,7 @@ func adjustJson(objType *gormx.ModelObjectType, j map[string]interface{}, modMap
 	return modMap, nil
 }
 
-func isObjectField(objType *gormx.ModelObjectType, fieldName string) bool {
+func isObjectField(objType *dbproxy.ModelObjectType, fieldName string) bool {
 	for _, v := range objType.FieldList.List {
 		if v.FieldName == fieldName && v.Type == "object" {
 			return true
@@ -344,11 +344,11 @@ func isObjectField(objType *gormx.ModelObjectType, fieldName string) bool {
 }
 
 // 跳过数据库没有定义的列
-func compareDbColAndAdjust(objType *gormx.ModelObjectType, j map[string]interface{}) error {
+func compareDbColAndAdjust(objType *dbproxy.ModelObjectType, j map[string]interface{}) error {
 	return nil
 }
 
-func getBatchInsertObjMapList(objType *gormx.ModelObjectType, jsonDataList []string) ([]map[string]interface{}, error) {
+func getBatchInsertObjMapList(objType *dbproxy.ModelObjectType, jsonDataList []string) ([]map[string]interface{}, error) {
 	hasCreatedAt := false
 	hasUpdatedAt := false
 	hasCreatorId := false
@@ -437,7 +437,7 @@ func IsMysqlUniqueIndexConflictError(err error) (isDup bool) {
 //	return ""
 //}
 
-func getFieldDefaultValue(f *gormx.ObjectField) interface{} {
+func getFieldDefaultValue(f *dbproxy.ObjectField) interface{} {
 	if f.IsArray {
 		return ""
 	}

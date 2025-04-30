@@ -10,12 +10,11 @@ import (
 	"gmicro/pkg/gerr"
 	"gmicro/pkg/rpc"
 	"gmicro/pkg/uctx"
-	"gmicro/service/gormx"
 	"net/http"
 )
 
-func InsertModel(ctx uctx.IUCtx, req *gormx.InsertModelReq) (*gormx.InsertModelRsp, error) {
-	var resp gormx.InsertModelRsp
+func InsertModel(ctx uctx.IUCtx, req *InsertModelReq) (*InsertModelRsp, error) {
+	var resp InsertModelRsp
 	err := rpc.DoRequest(ctx, "dbproxy", "/dbproxyserver/InsertModel", http.MethodPost, req, &resp)
 	if err != nil {
 		return nil, gerr.Wrap(err)
@@ -23,8 +22,8 @@ func InsertModel(ctx uctx.IUCtx, req *gormx.InsertModelReq) (*gormx.InsertModelR
 	return &resp, nil
 }
 
-func DelModel(ctx uctx.IUCtx, req *gormx.DelModelReq) (*gormx.DelModelRsp, error) {
-	var resp gormx.DelModelRsp
+func DelModel(ctx uctx.IUCtx, req *DelModelReq) (*DelModelRsp, error) {
+	var resp DelModelRsp
 	err := rpc.DoRequest(ctx, "dbproxy", "/dbproxyserver/DelModel", http.MethodPost, req, &resp)
 	if err != nil {
 		return nil, gerr.Wrap(err)
@@ -32,8 +31,8 @@ func DelModel(ctx uctx.IUCtx, req *gormx.DelModelReq) (*gormx.DelModelRsp, error
 	return &resp, nil
 }
 
-func UpdateModel(ctx uctx.IUCtx, req *gormx.UpdateModelReq) (*gormx.UpdateModelRsp, error) {
-	var resp gormx.UpdateModelRsp
+func UpdateModel(ctx uctx.IUCtx, req *UpdateModelReq) (*UpdateModelRsp, error) {
+	var resp UpdateModelRsp
 	err := rpc.DoRequest(ctx, "dbproxy", "/dbproxyserver/UpdateModel", http.MethodPost, req, &resp)
 	if err != nil {
 		return nil, gerr.Wrap(err)
@@ -41,8 +40,8 @@ func UpdateModel(ctx uctx.IUCtx, req *gormx.UpdateModelReq) (*gormx.UpdateModelR
 	return &resp, nil
 }
 
-func BatchInsertModel(ctx uctx.IUCtx, req *gormx.BatchInsertModelReq) (*gormx.BatchInsertModelRsp, error) {
-	var resp gormx.BatchInsertModelRsp
+func BatchInsertModel(ctx uctx.IUCtx, req *BatchInsertModelReq) (*BatchInsertModelRsp, error) {
+	var resp BatchInsertModelRsp
 	err := rpc.DoRequest(ctx, "dbproxy", "/dbproxyserver/BatchInsertModel", http.MethodPost, req, &resp)
 	if err != nil {
 		return nil, gerr.Wrap(err)
@@ -50,8 +49,8 @@ func BatchInsertModel(ctx uctx.IUCtx, req *gormx.BatchInsertModelReq) (*gormx.Ba
 	return &resp, nil
 }
 
-func SetModel(ctx uctx.IUCtx, req *gormx.SetModelReq) (*gormx.SetModelRsp, error) {
-	var resp gormx.SetModelRsp
+func SetModel(ctx uctx.IUCtx, req *SetModelReq) (*SetModelRsp, error) {
+	var resp SetModelRsp
 	err := rpc.DoRequest(ctx, "dbproxy", "/dbproxyserver/SetModel", http.MethodPost, req, &resp)
 	if err != nil {
 		return nil, gerr.Wrap(err)
@@ -59,9 +58,9 @@ func SetModel(ctx uctx.IUCtx, req *gormx.SetModelReq) (*gormx.SetModelRsp, error
 	return &resp, nil
 }
 
-func GetModelList(ctx uctx.IUCtx, req *gormx.GetModelListReq) (*gormx.GetModelListRsp, error) {
-	var resp gormx.GetModelListRsp
-	err := rpc.DoRequest(ctx, "dbproxy", "/dbproxyserver/GetModelList", http.MethodPost, req, &resp)
+func GetModelList(ctx uctx.IUCtx, req *GetModelListReq) (*GetModelListRsp, error) {
+	var resp GetModelListRsp
+	err := rpc.DoRequest(ctx, "dbproxy", "/dbproxy/GetModelList", http.MethodPost, req, &resp)
 	if err != nil {
 		return nil, gerr.Wrap(err)
 	}
