@@ -3,11 +3,23 @@ package gerr
 import "fmt"
 
 var errMap = make(map[int32]*Error)
+var errcodeMsgMap = make(map[int32]string)
 
 func Register(err ...*Error) {
 	for _, gerr := range err {
 		errMap[gerr.code] = gerr
 	}
+}
+
+func RegisterErrCodeMsg(errCodeMsg map[int32]string) {
+	for k, v := range errCodeMsg {
+		errcodeMsgMap[k] = v
+	}
+}
+
+func NewGErr(code int32) error {
+	msg := errcodeMsgMap[code]
+	return NewErr(code, msg)
 }
 
 func GetErrCode(err error) int32 {

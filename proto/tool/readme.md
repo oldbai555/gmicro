@@ -1,0 +1,8 @@
+- 生成client端
+  - rpc调用方法
+  - 错误码
+  - table 表名
+  - 
+- 生成server端
+  - api 方法
+  - main 方法

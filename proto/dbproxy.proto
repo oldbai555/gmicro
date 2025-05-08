@@ -1,0 +1,165 @@
+// 指定proto版本
+syntax = "proto3";
+
+// 指定golang包名
+option go_package = "gmicro/service/dbproxy";
+
+service dbproxy {
+    rpc GetModelList (GetModelListReq) returns (GetModelListRsp) {}
+    rpc InsertModel (InsertModelReq) returns (InsertModelRsp) {}
+    rpc DelModel (DelModelReq) returns (DelModelRsp) {}
+    rpc UpdateModel (UpdateModelReq) returns (UpdateModelRsp) {}
+    rpc BatchInsertModel (BatchInsertModelReq) returns (BatchInsertModelRsp) {}
+    rpc SetModel (SetModelReq) returns (SetModelRsp) {}
+}
+
+// 指定默认包名
+package dbproxy;
+
+message GetModelListReq {
+    string obj_type = 1;
+    string cond = 2;
+    string order = 3;
+    uint32 offset = 4;
+    uint32 limit = 5;
+    repeated string fields = 6;
+    bool skip_count = 7;
+    repeated string with_links = 8;
+    string db = 9;
+    string tr_id = 10;
+    string table = 11;
+    string group = 12;
+    repeated string skips = 13;
+    bool unscoped = 14;
+    bool return_unknown_fields = 15;
+    uint32 corp_id = 16;
+    string code_file_line_func = 17;
+    bool analyse = 18;
+    bool scan_db = 19;
+    repeated string values = 20;
+    bool use_biz = 21;
+    bool need_count = 22;
+    bool ignore_broken = 23;
+}
+
+message GetModelListRsp {
+    string rows_json = 1;
+    uint32 total = 2;
+    uint32 corp_id = 3;
+    bool scan_db_finish = 4;
+    uint32 next_offset = 5;
+}
+
+message InsertModelReq {
+    string obj_type = 1 ;
+    string json_data = 2 ;
+    string db = 3;
+    repeated string skips = 4;
+    string tr_id = 5;
+    string table = 6;
+    uint32 corp_id = 7;
+    string code_file_line_func = 8;
+    bool ignore_broken = 10;
+}
+
+message InsertModelRsp {
+    string json_data = 1;
+}
+
+message DelModelReq {
+    string obj_type = 1 ;
+    string cond = 2;
+    string db = 3;
+    string tr_id = 4;
+    string table = 5;
+    bool unscoped = 6;
+    uint32 limit = 7;
+    uint32 corp_id = 8;
+    string code_file_line_func = 9;
+    repeated string values = 10;
+    bool ignore_broken = 11;
+}
+
+message DelModelRsp {
+    uint64 rows_affected = 1;
+}
+
+message UpdateModelReq {
+    string obj_type = 1 ;
+    string json_data = 2 ;
+    string db = 3;
+    string cond = 4;
+    repeated string skips = 5;
+    string tr_id = 6;
+    string table = 7;
+    bool unscoped = 15;
+    uint32 corp_id = 16;
+    string code_file_line_func = 17;
+    repeated string values = 19;
+    bool show_sql = 20;
+    uint32 limit = 21;
+    bool ignore_broken = 22;
+}
+
+message UpdateModelRsp {
+    uint64 rows_affected = 1;
+    string json_data = 2;
+    string sql = 3;
+}
+
+message BatchInsertModelReq {
+    string obj_type = 1;
+    repeated string json_data_list = 2;
+    string db = 3;
+    bool ignore_conflict = 4;
+    string tr_id = 5;
+    string table = 6;
+    uint32 corp_id = 7;
+    string code_file_line_func = 8;
+    bool ignore_broken = 10;
+}
+
+message BatchInsertModelRsp {
+    uint64 last_insert_id = 1;
+    uint64 rows_affected = 2;
+}
+
+message SetModelReq {
+    string obj_type = 1;
+    string json_data = 2;
+    string db = 3;
+    repeated string skips = 4;
+    string tr_id = 5;
+    string table = 6;
+    bool unscoped = 7;
+    string cond = 8;
+    uint32 corp_id = 9;
+    string code_file_line_func = 10;
+    repeated string values = 12;
+    bool ignore_broken = 13;
+}
+
+message SetModelRsp {
+    uint64 rows_affected = 1;
+    string json_data = 2;
+}
+
+message ModelObjectType {
+    string name = 1;
+    ObjectFieldList field_list = 2;
+}
+
+message ObjectFieldList {
+    repeated ObjectField list = 1;
+}
+
+message ObjectField {
+    // @desc: 字段名
+    string field_name = 1;
+    // @desc: 真实类型: 比如 uint32 string bool object ...
+    string type = 2;
+    // @desc: 字段注释
+    string comment = 3;
+    bool is_array = 4;
+    bool is_unsigned = 5;
+}

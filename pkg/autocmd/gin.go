@@ -40,7 +40,7 @@ func (c *Cmd) WithHandleResult(handleF func(ctx *gin.Context, result proto.Messa
 }
 
 func (c *Cmd) GinPost(ctx *gin.Context) {
-	// func (a *Server)  RpcFunc(ctx context.Context, req *RpcReq) (*RpcRsp, error)
+	// func RpcFunc(ctx context.Context, req *RpcReq) (*RpcRsp, error)
 
 	// call
 	h := c.GRpcFunc
@@ -95,7 +95,7 @@ func (c *Cmd) GinPost(ctx *gin.Context) {
 		nCtx.SetExtInfo(extInfo)
 	}
 
-	log.Infof("req:[%s]", string(buff))
+	log.Infof("req:[ %s ]", string(buff))
 
 	handlerRet := v.Call([]reflect.Value{reflect.ValueOf(nCtx), reqV})
 

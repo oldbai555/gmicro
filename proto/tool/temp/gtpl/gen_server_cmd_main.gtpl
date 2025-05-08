@@ -6,8 +6,8 @@ import (
 	"gmicro/pkg/routine"
 	"gmicro/pkg/rpc"
 	"gmicro/pkg/syscfg"
-	"gmicro/service/dbproxy"
-	"gmicro/service/dbproxyserver/impl"
+	"gmicro/service/{{.ProtoName}}"
+	"gmicro/service/{{.ProtoName}}server/impl"
 )
 
 var (
@@ -16,7 +16,7 @@ var (
 
 func main() {
 	// 加载日志
-	log.InitLogger(log.WithAppName(dbproxy.ServerName), log.WithScreen(!IsProd), log.WithLevel(log.DebugLevel))
+	log.InitLogger(log.WithAppName({{.ProtoName}}.ServerName), log.WithScreen(!IsProd), log.WithLevel(log.DebugLevel))
 	defer func() {
 		log.Flush()
 	}()
@@ -38,7 +38,7 @@ func main() {
 
 	// 启动服务
 	routine.Run(func() {
-		err = rpc.ServerRun(dbproxy.ServerName, srvAddr, cmdList)
+		err = rpc.ServerRun({{.ProtoName}}.ServerName, srvAddr, cmdList)
 		if err != nil {
 			log.Errorf("err:%v", err)
 			return

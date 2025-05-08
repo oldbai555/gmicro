@@ -1,0 +1,4 @@
+server:
+  name: "dbproxy"
+  port: 20001
+  ip: "0.0.0.0"

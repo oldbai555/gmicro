@@ -1,0 +1,85 @@
+// 指定proto版本
+syntax = "proto3";
+
+// 指定golang包名
+option go_package = "gmicro/service/base";
+import "google/protobuf/descriptor.proto";
+
+// 指定默认包名
+package base;
+
+// 定义 const 服务
+service base {}
+
+extend google.protobuf.MethodOptions {
+    string ApiMethod = 20001;// api 接口 默认为 POST , 可选 GET PUT POST DELETE
+    string AuthType = 20002;//  接口认证类型 默认为 user , 可选 public,system,user
+    string IgnoreSvrRpc = 20003;//  忽略生成 server 端 rpc 相关代码 存在即为ture
+    string GenCRUDSvrRpcTemp = 20004;//  按模板生成CURD代码. ADD GET UPDATE DELETE LIST
+    string ModelName = 20005;//  按 ModelName 通过模板生成CURD代码
+    string CodeGenRpcFuncFileName = 20006; // 代码生成 rpc 函数文件名
+}
+
+enum ErrCode {
+    Nil = 0;
+    Success = 200;
+    // 20000 - 30000
+    ErrAnInvalidRequest = 20001;  // 无效的请求
+    ErrAnInvalidRsp = 20002;  // 无效的响应
+}
+
+enum DefaultOrderBy {
+    DefaultOrderByNil = 0;
+    DefaultOrderByCreatedAtDesc = 101;
+    DefaultOrderByCreatedAtAcs = 102;
+    DefaultOrderByIdDesc = 103;
+}
+
+enum DefaultListOption {
+    DefaultListOptionNil = 0;
+    // @type: stringList
+    DefaultListOptionSelect = 101;
+    // @type: uint32
+    DefaultListOptionOrderBy = 102;
+    // @type: stringList
+    DefaultListOptionGroupBy = 103;
+    // @type: bool
+    DefaultListOptionWithTrash = 104;
+    // @type: uint64List
+    DefaultListOptionIdList = 105;
+    // @type: timeStampRange
+    DefaultListOptionCreatedAt = 106;
+    // @type: uint32List
+    DefaultListOptionCreatorIdList = 107;
+    // @type: uint32List
+    DefaultListOptionCorpIdList = 108;
+}
+
+message Paginate {
+    uint32 offset = 1;
+    uint32 limit = 2;
+    // @desc: 总行数
+    uint32 total = 3;
+}
+
+message Option{
+    int32 key = 1;
+    string value = 2;
+}
+
+message ListOption{
+    uint32 offset = 1;
+    uint32 limit = 2;
+    // @desc: 跳过统计总行数
+    bool skip_total = 3;
+    repeated Option options = 4;
+}
+
+message RawReq {
+    bytes buf = 1;
+}
+
+message RawRsp {
+    bytes buf = 1;
+    string content_type = 2;
+}
