@@ -55,7 +55,7 @@ func WithGenServerGormGen() Option {
 			utils.CreateDir(serverPath)
 		}
 		implPath := path.Join(serverPath, "impl")
-		scriptPath := path.Join(implPath, "script")
+		scriptPath := path.Join(serverPath, "script")
 		if !parse2.FileExists(scriptPath) {
 			utils.CreateDir(scriptPath)
 		}
