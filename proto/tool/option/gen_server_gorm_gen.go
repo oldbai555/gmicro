@@ -22,31 +22,66 @@ import (
 )
 
 /*
-
 // 文件表
-message ModelFile {
-    uint64 id = 1;
-    uint32 created_at = 2;
-    uint32 updated_at = 3;
-    uint32 deleted_at = 4;
-    uint64 creator_id = 5;
-    int64 size = 6;
-    // @desc: 原文件名
-    string name = 7;
-    // @desc: 文件重命名
-    string rename = 8;
-    // @desc: 文件路径
-    // @gorm:"index:idx_path"
-    string path = 9;
-    // @desc: 存储桶
-    // @gorm:"index:idx_bucket_domain;type:VARCHAR(511)"
-    string bucket = 10;
-    // @desc: 域名
-    // @gorm:"index:idx_bucket_domain;type:VARCHAR(511)"
-    string domain = 11;
+
+	message ModelFile {
+	    uint64 id = 1;
+	    uint32 created_at = 2;
+	    uint32 updated_at = 3;
+	    uint32 deleted_at = 4;
+	    uint64 creator_id = 5;
+	    int64 size = 6;
+	    // @desc: 原文件名
+	    string name = 7;
+	    // @desc: 文件重命名
+	    string rename = 8;
+	    // @desc: 文件路径
+	    // @gorm:"index:idx_path"
+	    string path = 9;
+	    // @desc: 存储桶
+	    // @gorm:"index:idx_bucket_domain;type:VARCHAR(511)"
+	    string bucket = 10;
+	    // @desc: 域名
+	    // @gorm:"index:idx_bucket_domain;type:VARCHAR(511)"
+	    string domain = 11;
+	}
+*/
+
+type Field struct {
+	Name    string
+	Type    string
+	Comment string
+	Default string
 }
 
-*/
+type IndexMap map[string][]string // index name -> []fields
+
+type Querier interface {
+	// SELECT * FROM @@table WHERE id=@id and (deleted_at=0 OR deleted_at IS NULL)
+	GetById(id int) (gen.T, error)
+}
+
+//type CommonMethod struct {
+//}
+//
+//func (*CommonMethod) IsNotFound(err error) bool {
+//	if err == gorm.ErrRecordNotFound {
+//		return true
+//	}
+//	return false
+//}
+
+const (
+	SQLLine        = "\t`%s` %s %s\t"
+	CommentLine    = "\tCOMMENT '%s'\t"
+	PRIMARYKeyLine = "\tPRIMARY KEY (`%s`),\n"
+	IndexLine      = "\tINDEX `%s` (%s),\n"
+	MySqlEngine    = "INNODB"
+	CreateSQLHead  = "CREATE TABLE `%s` (" + "\n"
+	CreateSQLTail  = "\n)\nENGINE=" + MySqlEngine + " DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT '%s';"
+	SpaceN         = ",\n"
+	PKeyDesc       = "\tNOT NULL AUTO_INCREMENT"
+)
 
 func WithGenServerGormGen() Option {
 	return func(pbCtx *parse2.PbContext, req *vo.CodeFuncParams) {
@@ -63,7 +98,7 @@ func WithGenServerGormGen() Option {
 			if !strings.HasPrefix(message.Name, "Model") {
 				continue
 			}
-			sql := ParseProtoToSQL(message)
+			sql := parseProtoToSQL(message)
 			err := utils.CreateAndWriteFile(path.Join(scriptPath, toSnakeCase(message.Name)+".sql"), sql)
 			if err != nil {
 				log.Errorf("err:%v", err)
@@ -76,68 +111,7 @@ func WithGenServerGormGen() Option {
 	}
 }
 
-type Querier interface {
-	// SELECT * FROM @@table WHERE id=@id and (deleted_at=0 OR deleted_at IS NULL)
-	GetById(id int) (gen.T, error)
-}
-
-func executeAndGenerate(scriptPath, implPath string) error {
-	gormDB, err := gorm.Open(rawsql.New(rawsql.Config{
-		FilePath: []string{scriptPath}, // 建表sql目录
-	}))
-	if err != nil {
-		log.Fatalf("err:%v", err)
-	}
-	fieldOpts := []gen.ModelOpt{
-		gen.FieldGORMTag("updated_at", func(tag field.GormTag) field.GormTag {
-			tag.Set("autoUpdateTime", "")
-			return tag
-		}),
-		gen.FieldGORMTag("created_at", func(tag field.GormTag) field.GormTag {
-			tag.Set("autoCreateTime", "")
-			return tag
-		}),
-		gen.FieldType("deleted_at", "soft_delete.DeletedAt"),
-	}
-	g := gen.NewGenerator(gen.Config{
-		OutPath:           path.Join(implPath, "query"),
-		Mode:              gen.WithDefaultQuery | gen.WithoutContext | gen.WithQueryInterface,
-		FieldCoverable:    true,
-		FieldWithTypeTag:  true,
-		FieldWithIndexTag: true,
-		FieldSignable:     true,
-	})
-	g.UseDB(gormDB)
-	models := g.GenerateAllTable(fieldOpts...)
-	g.ApplyBasic(models...)
-	g.ApplyInterface(func(Querier) {}, models...)
-	g.Execute()
-
-	return nil
-}
-
-type Field struct {
-	Name    string
-	Type    string
-	Comment string
-	Default string
-}
-
-type IndexMap map[string][]string // index name -> []fields
-
-const (
-	SQLLine        = "\t`%s` %s %s\t"
-	CommentLine    = "\tCOMMENT '%s'\t"
-	PRIMARYKeyLine = "\tPRIMARY KEY (`%s`),\n"
-	IndexLine      = "\tINDEX `%s` (%s),\n"
-	MySqlEngine    = "INNODB"
-	CreateSQLHead  = "CREATE TABLE `%s` (" + "\n"
-	CreateSQLTail  = "\n)\nENGINE=" + MySqlEngine + " DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT '%s';"
-	SpaceN         = ",\n"
-	PKeyDesc       = "\tNOT NULL AUTO_INCREMENT"
-)
-
-func ParseProtoToSQL(m *proto.Message) string {
+func parseProtoToSQL(m *proto.Message) string {
 	// 提取 @desc 注释
 	var extractDesc = func(comment *proto.Comment) string {
 		if comment == nil {
@@ -315,6 +289,42 @@ func ParseProtoToSQL(m *proto.Message) string {
 
 	log.Infof("📄 Generated SQL: %s", sql)
 	return sql
+}
+
+func executeAndGenerate(scriptPath, implPath string) error {
+	gormDB, err := gorm.Open(rawsql.New(rawsql.Config{
+		FilePath: []string{scriptPath}, // 建表sql目录
+	}))
+	if err != nil {
+		log.Fatalf("err:%v", err)
+	}
+	fieldOpts := []gen.ModelOpt{
+		gen.FieldGORMTag("updated_at", func(tag field.GormTag) field.GormTag {
+			tag.Set("autoUpdateTime", "")
+			return tag
+		}),
+		gen.FieldGORMTag("created_at", func(tag field.GormTag) field.GormTag {
+			tag.Set("autoCreateTime", "")
+			return tag
+		}),
+		gen.FieldType("deleted_at", "soft_delete.DeletedAt"),
+		//gen.WithMethod(CommonMethod{}),
+	}
+	g := gen.NewGenerator(gen.Config{
+		OutPath:           path.Join(implPath, "query"),
+		Mode:              gen.WithDefaultQuery | gen.WithoutContext | gen.WithQueryInterface,
+		FieldCoverable:    true,
+		FieldWithTypeTag:  true,
+		FieldWithIndexTag: true,
+		FieldSignable:     true,
+	})
+	g.UseDB(gormDB)
+	models := g.GenerateAllTable(fieldOpts...)
+	g.ApplyBasic(models...)
+	g.ApplyInterface(func(Querier) {}, models...)
+	g.Execute()
+
+	return nil
 }
 
 // 驼峰转蛇形
