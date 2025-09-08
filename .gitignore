@@ -26,3 +26,7 @@ git remote set-url origin https://token@github.com/oldbai555/bgg.git
 /package/*
 /demo/uploader/uploader
 /script/ops/uploader.exe
+/service/test/
+/service/testserver/
+/proto/tool/proto2gorm/go_build_proto2gorm.exe
+/proto/tool/proto2gorm/mysql/*.sql

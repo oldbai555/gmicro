@@ -58,7 +58,7 @@ type IndexMap map[string][]string // index name -> []fields
 
 type Querier interface {
 	// SELECT * FROM @@table WHERE id=@id and (deleted_at=0 OR deleted_at IS NULL)
-	GetById(id int) (gen.T, error)
+	GetById(id uint64) (gen.T, error)
 }
 
 //type CommonMethod struct {

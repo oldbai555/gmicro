@@ -7,13 +7,16 @@ func {{.RpcName}}(ctx context.Context, req *{{.Client}}.{{.RpcReq}}) (*{{.Client
 		return nil, gerr.Wrap(err)
 	}
 
-	data,err := Orm{{.ModelName}}.NewBaseScope().Where({{.Client}}.FieldId_, req.Data.Id).First(uCtx)
-	if err != nil {
-		return nil, gerr.Wrap(err)
-	}
+    db := query.ModelFile.ReadDB()
+    data, err := db.GetById(req.Data.Id)
+    if err != nil {
+    	return nil, gerr.Wrap(err)
+    }
 
-	_, err = Orm{{.ModelName}}.NewBaseScope().Where({{.Client}}.FieldId_, data.Id).Update(uCtx,utils.OrmStruct2Map(req.Data))
-	if err != nil {
+    db = query.ModelFile.WriteDB()
+    // todo ...
+    _, err = db.Where(query.ModelFile.ID.Eq(data.ID)).Updates()
+    if err != nil {
 		return nil, gerr.Wrap(err)
 	}
 

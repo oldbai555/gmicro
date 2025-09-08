@@ -7,10 +7,10 @@ func {{.RpcName}}(ctx context.Context, req *{{.Client}}.{{.RpcReq}}) (*{{.Client
 		return nil, gerr.Wrap(err)
 	}
 
-	listRsp, err := a.Get{{.ModelName}}List(ctx, &{{.Client}}.Get{{.ModelName}}ListReq{
+	listRsp, err := Get{{.ModelName}}List(ctx, &{{.Client}}.Get{{.ModelName}}ListReq{
     		ListOption: req.ListOption.
     			SetSkipTotal().
-    			AddOpt(core.DefaultListOption_DefaultListOptionSelect, {{.Client}}.FieldId_),
+    			AddOpt(base.DefaultListOption_DefaultListOptionSelect, {{.Client}}.FieldId_),
     	})
     if err != nil {
         return nil, gerr.Wrap(err)
@@ -22,10 +22,11 @@ func {{.RpcName}}(ctx context.Context, req *{{.Client}}.{{.RpcReq}}) (*{{.Client
     }
 
     idList := utils.PluckUint64List(listRsp.List, {{.Client}}.FieldId)
-    _, err = Orm{{.ModelName}}.NewBaseScope().WhereIn({{.Client}}.FieldId_, idList).Delete(uCtx)
-    if err != nil {
-        return nil, gerr.Wrap(err)
-    }
+	db := query.ModelFile.WriteDB()
+	_, err = db.Where(query.ModelFile.ID.In(idList...)).Delete()
+	if err != nil {
+		return nil, gerr.Wrap(err)
+	}
 
 	return &rsp, err
 }

@@ -23,7 +23,7 @@ func WithGenServerImplRpcAutoGen() Option {
 	return func(pbCtx *parse2.PbContext, req *vo.CodeFuncParams) {
 		for _, rpcNode := range pbCtx.RpcList {
 			var defaultFileName = "impl.go"
-			specFileName := strings.ToLower(rpcNode.Options["(lb.CodeGenRpcFuncFileName)"])
+			specFileName := strings.ToLower(rpcNode.Options["(base.CodeGenRpcFuncFileName)"])
 			if specFileName != "" {
 				defaultFileName = specFileName + ".go"
 			}
@@ -60,18 +60,18 @@ import (
 			}
 
 			var defaultTemp = gtpl.GenRpcServerFuncCode
-			switch strings.ToUpper(rpcNode.Options["(lb.GenCRUDSvrRpcTemp)"]) {
-			case strings.ToUpper("ADD"):
-				defaultTemp = gtpl.GenRpcServerFuncCodeByAdd
-			case strings.ToUpper("GET"):
-				defaultTemp = gtpl.GenRpcServerFuncCodeByGet
-			case strings.ToUpper("UPDATE"):
-				defaultTemp = gtpl.GenRpcServerFuncCodeByUpdate
-			case strings.ToUpper("DELETE"):
-				defaultTemp = gtpl.GenRpcServerFuncCodeByDelete
-			case strings.ToUpper("LIST"):
-				defaultTemp = gtpl.GenRpcServerFuncCodeByList
-			}
+			//switch strings.ToUpper(rpcNode.Options["(base.GenCRUDSvrRpcTemp)"]) {
+			//case strings.ToUpper("ADD"):
+			//	defaultTemp = gtpl.GenRpcServerFuncCodeByAdd
+			//case strings.ToUpper("GET"):
+			//	defaultTemp = gtpl.GenRpcServerFuncCodeByGet
+			//case strings.ToUpper("UPDATE"):
+			//	defaultTemp = gtpl.GenRpcServerFuncCodeByUpdate
+			//case strings.ToUpper("DELETE"):
+			//	defaultTemp = gtpl.GenRpcServerFuncCodeByDelete
+			//case strings.ToUpper("LIST"):
+			//	defaultTemp = gtpl.GenRpcServerFuncCodeByList
+			//}
 			if _, ok := funcSvr[rpcNode.Rpc.Name]; !ok {
 				content, err = temp.GenCodeByTemplate(defaultTemp, &vo.GenServerImplRpc{
 					RpcName:   rpcNode.Rpc.Name,
@@ -79,7 +79,7 @@ import (
 					RpcRsp:    rpcNode.Rpc.ReturnsType,
 					Server:    pbCtx.ServiceName,
 					NewSev:    utils.UpperFirst(pbCtx.ServiceName),
-					ModelName: utils.UpperFirst(rpcNode.Options["(lb.ModelName)"]),
+					ModelName: utils.UpperFirst(rpcNode.Options["(base.ModelName)"]),
 					Client:    pbCtx.ServiceName,
 				})
 				if err != nil {

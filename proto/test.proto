@@ -13,11 +13,44 @@ package test;
 // 定义 lboss 服务
 service test {
 
-    // @cat:
+    // @cat: File
     // @name:
-    // @desc: 删除文件
+    // @desc:
+    // @error:
+    rpc AddFile (AddFileReq) returns (AddFileRsp) {
+        option(base.CodeGenRpcFuncFileName) = "file_api";
+    };
+
+    // @cat: File
+    // @name:
+    // @desc:
     // @error:
     rpc DelFileList (DelFileListReq) returns (DelFileListRsp) {
+        option(base.CodeGenRpcFuncFileName) = "file_api";
+    };
+
+    // @cat: File
+    // @name:
+    // @desc:
+    // @error:
+    rpc UpdateFile (UpdateFileReq) returns (UpdateFileRsp) {
+        option(base.CodeGenRpcFuncFileName) = "file_api";
+    };
+
+    // @cat: File
+    // @name:
+    // @desc:
+    // @error:
+    rpc GetFile (GetFileReq) returns (GetFileRsp) {
+        option(base.CodeGenRpcFuncFileName) = "file_api";
+    };
+
+    // @cat: File
+    // @name:
+    // @desc:
+    // @error:
+    rpc GetFileList (GetFileListReq) returns (GetFileListRsp) {
+        option(base.CodeGenRpcFuncFileName) = "file_api";
     };
 
 }
@@ -47,8 +80,46 @@ message ModelFile {
     string domain = 11;
 }
 
+
+message AddFileReq {
+    ModelFile data = 1 [(validate.rules).message = {required:true}];
+}
+
+message AddFileRsp {
+    ModelFile data = 1;
+}
+
+message UpdateFileReq {
+    ModelFile data = 1 [(validate.rules).message = {required:true}];
+}
+
+message UpdateFileRsp {
+}
+
 message DelFileListReq {
+    // @ref_to: GetFileListReq.ListOption
+    base.ListOption list_option = 1 [(validate.rules).message = {required:true}];
 }
 
 message DelFileListRsp {
+}
+
+message GetFileReq {
+    uint64 id = 1 [(validate.rules).uint64 = {gt:0}];
+}
+
+message GetFileRsp {
+    ModelFile data = 1;
+}
+
+message GetFileListReq {
+    enum ListOption {
+        ListOptionNil = 0;
+    }
+    base.ListOption list_option = 1 [(validate.rules).message = {required:true}];
+}
+
+message GetFileListRsp {
+    base.Paginate paginate = 1;
+    repeated ModelFile list = 2;
 }
