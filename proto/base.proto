@@ -37,6 +37,7 @@ enum DefaultOrderBy {
 
 enum DefaultListOption {
     DefaultListOptionNil = 0;
+    DefaultListOptionOffsetLimit = 100;
     // @type: stringList
     DefaultListOptionSelect = 101;
     // @type: uint32
@@ -49,10 +50,8 @@ enum DefaultListOption {
     DefaultListOptionIdList = 105;
     // @type: timeStampRange
     DefaultListOptionCreatedAt = 106;
-    // @type: uint32List
+    // @type: uint64List
     DefaultListOptionCreatorIdList = 107;
-    // @type: uint32List
-    DefaultListOptionCorpIdList = 108;
 }
 
 message Paginate {

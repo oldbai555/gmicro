@@ -21,6 +21,7 @@ const (
 	OptValueTypeBool           = 7
 	OptValueTypeStringList     = 8
 	OptValueTypeInt32          = 9
+	OptValueTypeOffsetLimit    = 10
 )
 
 const (
@@ -39,6 +40,7 @@ type OptionsHandler struct {
 	cbUint64List     func(val []uint64) error
 	cbBool           func(val bool) error
 	cbStringList     func(val []string) error
+	cbOffsetLimit    func(offset, limit int) error
 	ignoreZeroValue  bool
 }
 type OptionsProcessor struct {
@@ -173,6 +175,15 @@ func (p *OptionsProcessor) AddBool(typ interface{}, cb func(val bool) error) *Op
 	p.handlers[x] = &OptionsHandler{
 		typ:    OptValueTypeBool,
 		cbBool: cb,
+	}
+	return p
+}
+
+func (p *OptionsProcessor) AddOffsetLimit(typ interface{}, cb func(offset, limit int) error) *OptionsProcessor {
+	x := toInt32(typ)
+	p.handlers[x] = &OptionsHandler{
+		typ:           OptValueTypeOffsetLimit,
+		cbOffsetLimit: cb,
 	}
 	return p
 }
@@ -352,6 +363,21 @@ func (p *OptionsProcessor) Process() error {
 			}
 			if h.cbInt32 != nil {
 				err = h.cbInt32(int32(x))
+				if err != nil {
+					return err
+				}
+			}
+		case OptValueTypeOffsetLimit:
+			offset := p.listOption.Offset
+			limit := p.listOption.Limit
+			if limit > 2000 || limit < 0 {
+				limit = 2000
+			}
+			if offset < 0 {
+				offset = 0
+			}
+			if h.cbOffsetLimit != nil {
+				err = h.cbOffsetLimit(int(offset), int(limit))
 				if err != nil {
 					return err
 				}
