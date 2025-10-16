@@ -35,8 +35,14 @@ func WithGenServerImplRpcAutoGen() Option {
 package impl
 
 import (
+	"context"
 	"gmicro/pkg/uctx"
 	"gmicro/service/%s"
+	"gmicro/service/base"
+	"gmicro/pkg/log"
+	"gorm.io/gen/field"
+	"github.com/jinzhu/copier"
+	utils "gmicro/common"
 )
 `, pbCtx.ServiceName))
 				err := utils.CreateAndWriteFile(absGoFilePath, strs.String())
@@ -60,18 +66,18 @@ import (
 			}
 
 			var defaultTemp = gtpl.GenRpcServerFuncCode
-			//switch strings.ToUpper(rpcNode.Options["(base.GenCRUDSvrRpcTemp)"]) {
-			//case strings.ToUpper("ADD"):
-			//	defaultTemp = gtpl.GenRpcServerFuncCodeByAdd
-			//case strings.ToUpper("GET"):
-			//	defaultTemp = gtpl.GenRpcServerFuncCodeByGet
-			//case strings.ToUpper("UPDATE"):
-			//	defaultTemp = gtpl.GenRpcServerFuncCodeByUpdate
-			//case strings.ToUpper("DELETE"):
-			//	defaultTemp = gtpl.GenRpcServerFuncCodeByDelete
-			//case strings.ToUpper("LIST"):
-			//	defaultTemp = gtpl.GenRpcServerFuncCodeByList
-			//}
+			switch strings.ToUpper(rpcNode.Options["(base.GenCRUDSvrRpcTemp)"]) {
+			case strings.ToUpper("ADD"):
+				defaultTemp = gtpl.GenRpcServerFuncCodeByAdd
+			case strings.ToUpper("GET"):
+				defaultTemp = gtpl.GenRpcServerFuncCodeByGet
+			case strings.ToUpper("UPDATE"):
+				defaultTemp = gtpl.GenRpcServerFuncCodeByUpdate
+			case strings.ToUpper("DELETE"):
+				defaultTemp = gtpl.GenRpcServerFuncCodeByDelete
+			case strings.ToUpper("LIST"):
+				defaultTemp = gtpl.GenRpcServerFuncCodeByList
+			}
 			if _, ok := funcSvr[rpcNode.Rpc.Name]; !ok {
 				content, err = temp.GenCodeByTemplate(defaultTemp, &vo.GenServerImplRpc{
 					RpcName:   rpcNode.Rpc.Name,

@@ -2,17 +2,15 @@ func {{.RpcName}}(ctx context.Context, req *{{.Client}}.{{.RpcReq}}) (*{{.Client
 	var rsp {{.Client}}.{{.RpcRsp}}
 	var err error
 
-	uCtx, err := uctx.ToUCtx(ctx)
+	db := query.Model{{.ModelName}}.WriteDB()
+	var data model.Model{{.ModelName}}
+	_ = copier.Copy(&data, req.Data)
+	err = db.Create(&data)
 	if err != nil {
 		return nil, gerr.Wrap(err)
 	}
-
-	db := query.ModelFile.WriteDB()
-	err = db.Create(req.Data)
-	if err != nil {
-		return nil, gerr.Wrap(err)
-	}
-    rsp.Data = req.Data
+	_ = copier.Copy(req.Data, &data)
+	rsp.Data = req.Data
 
 	return &rsp, err
 }

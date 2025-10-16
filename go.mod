@@ -13,6 +13,7 @@ require (
 	github.com/go-resty/resty/v2 v2.16.5
 	github.com/go-sql-driver/mysql v1.9.2
 	github.com/gookit/color v1.5.4
+	github.com/jinzhu/copier v0.4.0
 	github.com/json-iterator/go v1.1.12
 	github.com/petermattis/goid v0.0.0-20250319124200-ccd6737f222a
 	github.com/pkg/errors v0.9.1

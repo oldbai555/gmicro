@@ -2,11 +2,6 @@ func {{.RpcName}}(ctx context.Context, req *{{.Client}}.{{.RpcReq}}) (*{{.Client
 	var rsp {{.Client}}.{{.RpcRsp}}
 	var err error
 
-	uCtx, err := uctx.ToUCtx(ctx)
-	if err != nil {
-		return nil, gerr.Wrap(err)
-	}
-
 	listRsp, err := Get{{.ModelName}}List(ctx, &{{.Client}}.Get{{.ModelName}}ListReq{
     		ListOption: req.ListOption.
     			SetSkipTotal().
@@ -22,8 +17,8 @@ func {{.RpcName}}(ctx context.Context, req *{{.Client}}.{{.RpcReq}}) (*{{.Client
     }
 
     idList := utils.PluckUint64List(listRsp.List, {{.Client}}.FieldId)
-	db := query.ModelFile.WriteDB()
-	_, err = db.Where(query.ModelFile.ID.In(idList...)).Delete()
+	db := query.Model{{.ModelName}}.WriteDB()
+	_, err = db.Where(query.Model{{.ModelName}}.ID.In(idList...)).Delete()
 	if err != nil {
 		return nil, gerr.Wrap(err)
 	}

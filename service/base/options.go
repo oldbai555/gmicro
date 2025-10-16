@@ -8,6 +8,7 @@ import (
 	"reflect"
 	"strconv"
 	"strings"
+	"sync"
 )
 
 const (
@@ -48,6 +49,10 @@ type OptionsProcessor struct {
 	handlers   map[int32]*OptionsHandler
 }
 
+func (p *OptionsProcessor) Reset() {
+	*p = OptionsProcessor{}
+}
+
 func toInt32(i interface{}) int32 {
 	t := reflect.TypeOf(i)
 	k := t.Kind()
@@ -68,11 +73,20 @@ func toInt32(i interface{}) int32 {
 	return 0
 }
 
+var processorSyncPool = sync.Pool{New: func() any {
+	return &OptionsProcessor{}
+}}
+
 func NewOptionsProcessor(listOption *ListOption) *OptionsProcessor {
-	return &OptionsProcessor{
-		listOption: listOption,
-		handlers:   make(map[int32]*OptionsHandler),
-	}
+	optionsProcessor := processorSyncPool.Get().(*OptionsProcessor)
+	optionsProcessor.handlers = make(map[int32]*OptionsHandler)
+	optionsProcessor.listOption = listOption
+	return optionsProcessor
+}
+
+func ReleaseOptionsProcessor(st *OptionsProcessor) {
+	st.Reset()
+	processorSyncPool.Put(st)
 }
 
 func (p *OptionsProcessor) AddNone(typ interface{}, cb func() error) *OptionsProcessor {

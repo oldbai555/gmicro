@@ -18,6 +18,8 @@ service test {
     // @desc:
     // @error:
     rpc AddFile (AddFileReq) returns (AddFileRsp) {
+        option(base.ModelName) = "File";
+        option(base.GenCRUDSvrRpcTemp) = "ADD";
         option(base.CodeGenRpcFuncFileName) = "file_api";
     };
 
@@ -26,6 +28,8 @@ service test {
     // @desc:
     // @error:
     rpc DelFileList (DelFileListReq) returns (DelFileListRsp) {
+        option(base.ModelName) = "File";
+        option(base.GenCRUDSvrRpcTemp) = "DELETE";
         option(base.CodeGenRpcFuncFileName) = "file_api";
     };
 
@@ -34,6 +38,8 @@ service test {
     // @desc:
     // @error:
     rpc UpdateFile (UpdateFileReq) returns (UpdateFileRsp) {
+        option(base.ModelName) = "File";
+        option(base.GenCRUDSvrRpcTemp) = "UPDATE";
         option(base.CodeGenRpcFuncFileName) = "file_api";
     };
 
@@ -42,6 +48,8 @@ service test {
     // @desc:
     // @error:
     rpc GetFile (GetFileReq) returns (GetFileRsp) {
+        option(base.ModelName) = "File";
+        option(base.GenCRUDSvrRpcTemp) = "GET";
         option(base.CodeGenRpcFuncFileName) = "file_api";
     };
 
@@ -50,6 +58,8 @@ service test {
     // @desc:
     // @error:
     rpc GetFileList (GetFileListReq) returns (GetFileListRsp) {
+        option(base.ModelName) = "File";
+        option(base.GenCRUDSvrRpcTemp) = "LIST";
         option(base.CodeGenRpcFuncFileName) = "file_api";
     };
 
