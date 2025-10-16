@@ -79,13 +79,9 @@ func {{.RpcName}}(ctx context.Context, req *{{.Client}}.{{.RpcReq}}) (*{{.Client
 					return nil
 				})
 	}
+
 	// 处理业务
 	listOption := req.ListOption
-	limit := listOption.Limit
-	if limit > 2000 {
-		limit = 2000
-	}
-	offset := listOption.Offset
 
 	db := query.Model{{.ModelName}}.ReadDB()
 	processor := newOptionsProcessor(db, listOption)
@@ -94,25 +90,36 @@ func {{.RpcName}}(ctx context.Context, req *{{.Client}}.{{.RpcReq}}) (*{{.Client
 	}()
 
 	err = processor. // 往这追加非通用处理的listOption
-		Process()
+				Process()
 	if err != nil {
 		log.Errorf("err:%v", err)
 		return nil, gerr.Wrap(err)
 	}
-	findByPage, count, err := db.FindByPage(int(offset), int(limit))
+	var result []*model.Model{{.ModelName}}
+	if !listOption.SkipTotal {
+		var count int64
+		limit := listOption.Limit
+		if limit > 2000 {
+			limit = 2000
+		}
+		offset := listOption.Offset
+		result, count, err = db.FindByPage(int(offset), int(limit))
+		rsp.Paginate = &base.Paginate{
+			Total:  uint32(count),
+			Limit:  limit,
+			Offset: offset,
+		}
+	} else {
+		result, err = db.Find()
+	}
 	if err != nil {
 		return nil, gerr.Wrap(err)
 	}
-	for _, data := range findByPage {
+	for _, data := range result {
 		// 如果能手动赋值尽量手动，想使用copier强烈建议只拷贝单个对象影响不是很大
 		var pbData {{.Client}}.Model{{.ModelName}}
 		_ = copier.Copy(&pbData, data)
 		rsp.List = append(rsp.List, &pbData)
-	}
-	rsp.Paginate = &base.Paginate{
-		Total:  uint32(count),
-		Limit:  limit,
-		Offset: offset,
 	}
 
 	return &rsp, err
